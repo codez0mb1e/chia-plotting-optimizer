@@ -1,20 +1,18 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Management.Automation;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
-
-namespace PlottingMonitor
+namespace PlottingOptimizer
 {
     class Program
     {
         private const string PlotterLogsDir = @"C:\Users\dictator\.chia\mainnet\plotter";
-        private const string pattern = @"(Starting phase \d{1}\/\d{1})|(Renamed final file from)";
+        private const string Pattern = @"(Starting phase \d{1}\/\d{1})|(Renamed final file from)";
         private static readonly TimeSpan PullingPeriod = TimeSpan.FromMinutes(1);
         private const int MaxThreadsNumber = 16;
 
@@ -40,11 +38,12 @@ namespace PlottingMonitor
                 int availableToStart = GetAvailableToStartPlotsCount(phasesStats);
 
                 var plotTasks = new List<Task>();
-                Action StartPlottingProcess = () =>
+
+                void StartPlottingProcess()
                 {
                     var disks = GetDisks();
-                    plotTasks.Add(RunPowershellAsync(disks.tempDisk, disks.finalDisk));
-                };
+                    plotTasks.Add(RunPowerShellAsync(disks.tempDisk, disks.finalDisk));
+                }
 
                 for (int i = 0; i < availableToStart; i++)
                     Task.Run(StartPlottingProcess).ConfigureAwait(false);
@@ -58,11 +57,11 @@ namespace PlottingMonitor
 
         private static int GetAvailableToStartPlotsCount(IDictionary<string, int> phasesStats)
         {
-            int n_phase1 = phasesStats.Where(s => s.Value < 2).Count();
-            int n_phase2 = phasesStats.Where(s => s.Value == 2).Count();
-            int n_phase3 = phasesStats.Where(s => s.Value == 3).Count();
-            int n_phase4 = phasesStats.Where(s => s.Value == 4).Count();
-            int n_completed = phasesStats.Where(s => s.Value == 5).Count();
+            int n_phase1 = phasesStats.Count(s => s.Value < 2);
+            int n_phase2 = phasesStats.Count(s => s.Value == 2);
+            int n_phase3 = phasesStats.Count(s => s.Value == 3);
+            int n_phase4 = phasesStats.Count(s => s.Value == 4);
+            int n_completed = phasesStats.Count(s => s.Value == 5);
 
             int availableThreadsN = MaxThreadsNumber - (2 * n_phase1 + n_phase2 + n_phase3 + n_phase4) - 2; // 
             int availableToStart = (int)Math.Ceiling((decimal)(availableThreadsN / 2));
@@ -100,21 +99,19 @@ namespace PlottingMonitor
             const int DelayOnRetry = 100;
             
             for (int i = 0; i < NumberOfRetries; ++i) {
-                try {
-                    using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        using (var reader = new StreamReader(stream))
-                        {
-                            string content = reader.ReadToEnd();
-
-                            MatchCollection matches = Regex.Matches(content, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                            return matches.Count;
-                        }
-                    }
-                }
-                catch (IOException) when(i <= NumberOfRetries)
+                try
                 {
-                    Console.WriteLine($"Attempt number {i+1}");
+                    using var stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    using var reader = new StreamReader(stream);
+                    string content = reader.ReadToEnd();
+
+                    MatchCollection matches =
+                        Regex.Matches(content, Pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                    return matches.Count;
+                }
+                catch (IOException)
+                {
+                    Console.WriteLine($"Attempt number {i + 1}");
                     Thread.Sleep(DelayOnRetry);
                 }
             }
@@ -123,7 +120,7 @@ namespace PlottingMonitor
         }
 
 
-        private async static Task RunPowershellAsync(string tempDir, string finalDir)
+        private static async Task RunPowerShellAsync(string tempDir, string finalDir)
         {
             await Task.Delay(TimeSpan.FromSeconds(RandomNumber(0, 10))); // avoid throttling
 
