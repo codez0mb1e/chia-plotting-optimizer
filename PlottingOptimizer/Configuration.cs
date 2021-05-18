@@ -3,19 +3,17 @@ using System.Collections.Generic;
 
 namespace PlottingOptimizer
 {
-    public class Config
+    public class Configuration
     {
         public string PlotterLogsDir =>
 #if DEBUG
-            @"C:\Users\dictator\.chia\mainnet\test_plotter"
+            @"C:\Users\dmitr\.chia\mainnet\test_plotter"
 #else
             @"C:\Users\dictator\.chia\mainnet\plotter"
 #endif
         ;
 
-        public string Pattern => @"(Starting phase \d{1}\/\d{1})|(Renamed final file from)";
-
-
+        
         public int Phase1ThreadsN => 2;
 
         public int MaxPhase1ProcessN => 5;
@@ -32,9 +30,9 @@ namespace PlottingOptimizer
 
         public string PlottingScriptPath =>
 #if DEBUG
-            "run_plotting.debug.ps1"
+            "scripts/run_plotting.debug.ps1"
 #else
-            "run_plotting.ps1"
+            "scripts/run_plotting.ps1"
 #endif
         ;
 

@@ -14,7 +14,7 @@ namespace PlottingOptimizer
 {
     class Program
     {
-        private static readonly Config Config = new Config();
+        private static readonly Configuration Config = new Configuration();
 
 
         static async Task Main(string[] args)
@@ -56,6 +56,8 @@ namespace PlottingOptimizer
 
         private static async Task<int> GetPhasesNumberAsync(string filePath)
         {
+            const string phaseLabelPattern = @"(Starting phase \d{1}\/\d{1})|(Renamed final file from)";
+
             for (int i = 0; i < Config.PlottingLogReadingAttemptsN; ++i) {
                 try
                 {
@@ -64,7 +66,7 @@ namespace PlottingOptimizer
                     
                     string content = await reader.ReadToEndAsync().ConfigureAwait(false);
 
-                    MatchCollection matches = Regex.Matches(content, Config.Pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
+                    MatchCollection matches = Regex.Matches(content, phaseLabelPattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
                     return matches.Count;
                 }
@@ -97,8 +99,9 @@ namespace PlottingOptimizer
                 script = script
                     .Replace("[string]$tempDir", $"[string]$tempDir = '{disks.tempDir}'")
                     .Replace("[string]$finalDir", $"[string]$finalDir = '{disks.finalDir}'")
+                    .Replace("[string]$logDir", $"[string]$logDir = '{Config.PlotterLogsDir}'")
                     .Replace("[string]$chiaVersion", $"[string]$chiaVersion = '{Config.ChiaGuiVersion}'")
-                    .Replace("[string]$$threads", $"[string]$$threads = '{Config.Phase1ThreadsN}'");
+                    .Replace("[int]$threads", $"[int]$threads = {Config.Phase1ThreadsN}");
 
                 ps.AddScript(script);
 

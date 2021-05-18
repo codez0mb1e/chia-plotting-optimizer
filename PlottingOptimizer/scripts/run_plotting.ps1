@@ -4,7 +4,7 @@
   [int]$threads,
   [string]$tempDir,
   [string]$finalDir,
-  [string]$logDir = "~/.chia/mainnet/plotter/",
+  [string]$logDir,
   [string]$chiaVersion
 )
 
@@ -23,8 +23,3 @@ function Get-PlotterLogPath {
 $logPath = Get-PlotterLogPath
 
 chia plots create -n $plotsPerQueue -b $buffer -r $threads -t $tempDir -d $finalDir | Tee-Object -FilePath $logpath
-
-#New-Item -Path $logPath -ItemType "file" -Value "Starting phase 1/1"
-#Start-Sleep -Seconds 30
-
-Write-Host "Completed."

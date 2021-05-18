@@ -13,9 +13,9 @@ namespace PlottingOptimizer
 
     public class PlottingOptimizerStrategy : IPlottingOptimizerStrategy
     {
-        private readonly Config _config;
+        private readonly Configuration _config;
 
-        public PlottingOptimizerStrategy(Config config)
+        public PlottingOptimizerStrategy(Configuration config)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
@@ -29,16 +29,24 @@ namespace PlottingOptimizer
             int optimalCount = 0;
 
             var phasesStats = GetPhaseNumberToCurrentRunningProcessCount(currentPhases).ToImmutableList();
+            foreach (var s in phasesStats)
+                Console.WriteLine($"Phase #{s.PhaseNumber}: {s.ProcessesCount} active processes.");
 
-            int phase1Count = phasesStats.Single(p => p.PhaseNumber == 1).ProcessesCount;
-            int otherPhasesCount = phasesStats.Where(p => p.PhaseNumber != 1).Sum(p => p.ProcessesCount);
+
+            int phase1Count = phasesStats
+                .SingleOrDefault(p => p.PhaseNumber == 1)
+                .ProcessesCount;
+
+            int otherPhasesCount = phasesStats
+                .Where(p => p.PhaseNumber > 1 & p.PhaseNumber < 5)
+                .Sum(p => p.ProcessesCount);
 
 
             int availableThreadsN = Environment.ProcessorCount - _config.OsThreadsN - _config.ChiaNetworkThreadsN;
             availableThreadsN -= (_config.Phase1ThreadsN * phase1Count + otherPhasesCount);
 
 
-            optimalCount = (int)Math.Floor((decimal)(_config.Phase1ThreadsN / availableThreadsN));
+            optimalCount = (int)Math.Floor((decimal)(availableThreadsN/_config.Phase1ThreadsN));
 
             return optimalCount < _config.MaxPhase1ProcessN ? optimalCount : _config.MaxPhase1ProcessN;
         }

@@ -4,7 +4,7 @@
   [int]$threads,
   [string]$tempDir,
   [string]$finalDir,
-  [string]$logDir = "~/.chia/mainnet/plotter/",
+  [string]$logDir,
   [string]$chiaVersion
 )
 
