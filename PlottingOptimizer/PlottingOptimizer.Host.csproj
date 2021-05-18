@@ -11,7 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="run_plotting.ps1">
+    <None Update="scripts\run_plotting.debug.ps1">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="scripts\run_plotting.ps1">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
