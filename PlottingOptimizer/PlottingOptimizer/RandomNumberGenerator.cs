@@ -2,7 +2,7 @@
 
 namespace PlottingOptimizer
 {
-    internal static class RandomNumberGenerator
+    public static class RandomNumberGenerator
     {
         private static readonly Random Random = new Random();
 

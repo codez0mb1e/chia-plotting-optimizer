@@ -7,14 +7,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using RNG = PlottingOptimizer.RandomNumberGenerator;
+using static PlottingOptimizer.RandomNumberGenerator;
 
 
 namespace PlottingOptimizer
 {
     class Program
     {
-        private static readonly Configuration Config = new Configuration();
+        private static readonly Configuration Config = new ();
 
 
         static async Task Main(string[] args)
@@ -48,8 +48,8 @@ namespace PlottingOptimizer
         private static (string TempDisk, string FinalDisk) GetDisks()
         {
             return (
-                TempDisk: Config.TempDisks[RNG.RandomNumber(0, Config.TempDisks.Count)], 
-                FinalDisk: Config.FinalDisks[RNG.RandomNumber(0, Config.FinalDisks.Count)]
+                TempDisk: Config.TempDisks[RandomNumber(0, Config.TempDisks.Count)], 
+                FinalDisk: Config.FinalDisks[RandomNumber(0, Config.FinalDisks.Count)]
                 );
         }
 
@@ -87,7 +87,7 @@ namespace PlottingOptimizer
             if (disks.finalDir == null) throw new ArgumentException(nameof(disks));
             if (disks.tempDir == disks.finalDir) throw new ArgumentException();
 
-            await Task.Delay(TimeSpan.FromSeconds(RNG.RandomNumber(0, 10))); // avoid throttling
+            await Task.Delay(TimeSpan.FromSeconds(RandomNumber(0, 10))); // avoid throttling
 
             DateTime currentTime = DateTime.UtcNow;
             Console.WriteLine($"{currentTime:G} > Starting plotting for {disks.tempDir} to {disks.finalDir}...");

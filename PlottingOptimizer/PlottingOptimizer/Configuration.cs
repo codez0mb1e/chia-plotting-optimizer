@@ -13,7 +13,6 @@ namespace PlottingOptimizer
 #endif
         ;
 
-        
         public int Phase1ThreadsN => 2;
 
         public int MaxPhase1ProcessN => 5;
@@ -25,7 +24,9 @@ namespace PlottingOptimizer
         public int ChiaNetworkThreadsN => 2;
 
         public TimeSpan PullingPeriod => TimeSpan.FromMinutes(1);
+
         public IReadOnlyList<string> TempDisks => new[] { "X:/", "Y:/" };
+        
         public IReadOnlyList<string> FinalDisks => new[] { "O:/", "Q:/" };
 
         public string PlottingScriptPath =>
