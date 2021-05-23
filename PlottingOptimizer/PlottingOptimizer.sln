@@ -12,9 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlottingOptimizer.Host", "PlottingOptimizer.Host\PlottingOptimizer.Host.csproj", "{077B4297-0AF4-4707-9B17-324EE5B3CC49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlottingOptimizer.Tests", "PlottingOptimizer.Tests\PlottingOptimizer.Tests.csproj", "{105C6612-6AC8-41E8-ABE0-B0FCE273D161}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlottingOptimizer.Tests", "PlottingOptimizer.Tests\PlottingOptimizer.Tests.csproj", "{105C6612-6AC8-41E8-ABE0-B0FCE273D161}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlottingOptimizer", "PlottingOptimizer\PlottingOptimizer.csproj", "{DBB1AF76-8638-4482-8098-6D69745A3016}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlottingOptimizer.Core", "PlottingOptimizer\PlottingOptimizer.Core.csproj", "{DBB1AF76-8638-4482-8098-6D69745A3016}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
