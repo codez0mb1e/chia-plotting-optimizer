@@ -30,4 +30,4 @@ project.lock.json
 .testPublish/
 global.json
 launchSettings.json
-/.vs
+.vs/
