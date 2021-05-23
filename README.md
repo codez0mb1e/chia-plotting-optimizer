@@ -16,8 +16,8 @@ Connect with VM and update: `sudo apt update && sudo apt upgrade -y`
 Add non-root user (optional):
 
 ```bash
-sudo adduser dp
-sudo usermod -aG sudo dp
+sudo adduser $user_name
+sudo usermod -aG sudo $user_name
 ```
 
 ### Mount NVMe volume ([instruction](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/attach-disk-portal))
