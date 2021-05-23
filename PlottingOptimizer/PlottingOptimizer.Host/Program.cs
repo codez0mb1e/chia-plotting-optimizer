@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using PlottingOptimizer.Core;
+using PlottingOptimizer.Core.Configurations;
 using static PlottingOptimizer.RandomNumberGenerator;
 
 
@@ -20,8 +22,8 @@ namespace PlottingOptimizer
         static async Task Main(string[] args)
         {
             CancellationTokenSource source = new CancellationTokenSource();
-            IPlottingOptimizerStrategy optimizerStrategy = new PlottingOptimizerStrategy(Config);
-            DirectoryInfo di = new DirectoryInfo(Config.PlotterLogsDir);
+            IPlottingOptimizerStrategy optimizerStrategy = new PlottingOptimizerStrategy(Config.ComputeResources);
+            DirectoryInfo di = new DirectoryInfo(Config.PlottingDirectories.LogDir);
 
 
             CancellationToken token = source.Token;
@@ -48,8 +50,8 @@ namespace PlottingOptimizer
         private static (string TempDisk, string FinalDisk) GetDisks()
         {
             return (
-                TempDisk: Config.TempDisks[RandomNumber(0, Config.TempDisks.Count)], 
-                FinalDisk: Config.FinalDisks[RandomNumber(0, Config.FinalDisks.Count)]
+                TempDisk: Config.PlottingDirectories.TempDisks[RandomNumber(0, Config.PlottingDirectories.TempDisks.Count)], 
+                FinalDisk: Config.PlottingDirectories.FinalDisks[RandomNumber(0, Config.PlottingDirectories.FinalDisks.Count)]
                 );
         }
 
@@ -99,9 +101,9 @@ namespace PlottingOptimizer
                 script = script
                     .Replace("[string]$tempDir", $"[string]$tempDir = '{disks.tempDir}'")
                     .Replace("[string]$finalDir", $"[string]$finalDir = '{disks.finalDir}'")
-                    .Replace("[string]$logDir", $"[string]$logDir = '{Config.PlotterLogsDir}'")
+                    .Replace("[string]$logDir", $"[string]$logDir = '{Config.PlottingDirectories.LogDir}'")
                     .Replace("[string]$chiaVersion", $"[string]$chiaVersion = '{Config.ChiaGuiVersion}'")
-                    .Replace("[int]$threads", $"[int]$threads = {Config.Phase1ThreadsN}");
+                    .Replace("[int]$threads", $"[int]$threads = {Config.ComputeResources.Phase1ProcessorCount}");
 
                 ps.AddScript(script);
 

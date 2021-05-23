@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlottingOptimizer\PlottingOptimizer.csproj" />
+    <ProjectReference Include="..\PlottingOptimizer\PlottingOptimizer.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
