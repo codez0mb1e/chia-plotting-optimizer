@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using PlottingOptimizer.Core.Configurations;
 
-namespace PlottingOptimizer
+namespace PlottingOptimizer.Core
 {
     public interface IPlottingOptimizerStrategy
     {
@@ -13,11 +14,11 @@ namespace PlottingOptimizer
 
     public class PlottingOptimizerStrategy : IPlottingOptimizerStrategy
     {
-        private readonly Configuration _config;
+        private readonly PlottingComputeResources _computeResources;
 
-        public PlottingOptimizerStrategy(Configuration config)
+        public PlottingOptimizerStrategy(PlottingComputeResources computeResources)
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
+            _computeResources = computeResources ?? throw new ArgumentNullException(nameof(computeResources));
         }
 
 
@@ -26,7 +27,7 @@ namespace PlottingOptimizer
             if (currentPhases == null) 
                 throw new ArgumentNullException(nameof(currentPhases));
 
-            int optimalCount = 0;
+            int newPhase1Count = 0;
 
             var phasesStats = GetPhaseNumberToCurrentRunningProcessCount(currentPhases).ToImmutableList();
             foreach (var s in phasesStats)
@@ -42,13 +43,13 @@ namespace PlottingOptimizer
                 .Sum(p => p.ProcessesCount);
 
 
-            int availableThreadsN = Environment.ProcessorCount - _config.OsThreadsN - _config.ChiaNetworkThreadsN;
-            availableThreadsN -= (_config.Phase1ThreadsN * phase1Count + otherPhasesCount);
+            int availableProcessorCount = _computeResources.TotalProcessorCount - _computeResources.OsDemandProcessorCount - _computeResources.ChiaDemandProcessorCount;
+            availableProcessorCount -= (_computeResources.Phase1ProcessorCount * phase1Count + otherPhasesCount);
 
 
-            optimalCount = (int)Math.Floor((decimal)(availableThreadsN/_config.Phase1ThreadsN));
+            newPhase1Count = (int)Math.Floor((decimal)(availableProcessorCount/ _computeResources.Phase1ProcessorCount));
 
-            return optimalCount < _config.MaxPhase1ProcessN ? optimalCount : _config.MaxPhase1ProcessN;
+            return newPhase1Count < _computeResources.Phase1MaxProcessorCount ? newPhase1Count : _computeResources.Phase1MaxProcessorCount;
         }
 
 
