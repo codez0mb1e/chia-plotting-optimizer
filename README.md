@@ -110,7 +110,7 @@ sudo apt install -y powershell
 pwsh # Start PowerShell
 ```
 
-Install .NET Core: [steps](https://github.com/codez0mb1e/cloud-rstudio-server/blob/master/scripts/install_core.sh).
+Install .NET Core: [steps](/codez0mb1e/cloud-rstudio-server/blob/master/scripts/install_dotnet_tools.sh).
 
 
 ### Monitoring
@@ -130,6 +130,31 @@ Monitoring plotting vai [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter
 Install-Module -Repository PSGallery -Name PSChiaPlotter
 Get-ChiaPlottingStatistic | sort Time_started -Descending | select -first 20
 ```
+
+### Plotting Optimizer
+
+```bash
+# 1.
+# view ssh-key 
+cat ~/.ssh/id_rsa.pub
+# or create if it isn't exisit
+cd ~/.ssh && ssh-keygen
+
+# 2. Register SSH keys in github
+cat id_rsa.pub
+# and register to https://github.com/settings/keys
+
+# 3.
+git config --global user.name codez0mb1e
+git config --global user.email $user_email
+```
+
+
+```bash
+cd ~
+git clone git@github.com:codez0mb1e/chia-farmer.git
+```
+
 
 ### Chia GUI (obsolete)
 
