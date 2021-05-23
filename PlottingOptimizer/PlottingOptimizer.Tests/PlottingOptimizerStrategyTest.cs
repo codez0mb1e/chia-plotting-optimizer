@@ -14,7 +14,7 @@ namespace PlottingOptimizer.Tests
         public void CalculatePhases1OptimalCountTest()
         {
             // Init
-            var config = new Configuration();
+            var config = new PlottingSettings();
             var settings = config.ComputeResources;
             IPlottingOptimizerStrategy strategy = new PlottingOptimizerStrategy(config.ComputeResources);
 
@@ -26,14 +26,14 @@ namespace PlottingOptimizer.Tests
             var actual = strategy.CalculatePhases1OptimalCount(emptyStats);
             
             Assert.AreEqual(0, emptyStats.Count);
-            Assert.AreEqual(settings.Phase1MaxProcessorCount, actual);
+            Assert.AreEqual(settings.Phase1MaxCount, actual);
 
 
             // 2.
             var maxPhase1Stats = new Dictionary<string, int> { { "a",  1 }, { "b",  1 }, { "c",  1 }, { "d",  1 }, { "f",  1 }, { "e",  1 } };
             actual = strategy.CalculatePhases1OptimalCount(maxPhase1Stats);
             
-            Assert.IsTrue(maxPhase1Stats.Count(s => s.Value == 1) >= settings.Phase1MaxProcessorCount);
+            Assert.IsTrue(maxPhase1Stats.Count(s => s.Value == 1) >= settings.Phase1MaxCount);
             Assert.AreEqual(0, actual);
 
 
@@ -62,7 +62,7 @@ namespace PlottingOptimizer.Tests
 
             Assert.IsTrue(allPhasesCompleted.Count == availableCores);
             Assert.IsTrue(allPhasesCompleted.Count(s => s.Value < 5) == 0);
-            Assert.AreEqual(settings.Phase1MaxProcessorCount, actual);
+            Assert.AreEqual(settings.Phase1MaxCount, actual);
 
             // 5.
             var randomPhases = new Dictionary<string, int>

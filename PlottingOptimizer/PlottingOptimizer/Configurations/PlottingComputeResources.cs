@@ -4,14 +4,14 @@ namespace PlottingOptimizer.Core.Configurations
 {
     public class PlottingComputeResources
     {
-        public int TotalProcessorCount { get; } = 16; // TODO: auto detect CPU number: Environment.ProcessorCount;
+        public int TotalProcessorCount { get; set; }
 
-        public int OsDemandProcessorCount { get; } = 1;
+        public int OsDemandProcessorCount { get; set; }
 
-        public int ChiaDemandProcessorCount { get; } = 2;
+        public int ChiaDemandProcessorCount { get; set; }
 
-        public int Phase1ProcessorCount { get; } = 2;
+        public int Phase1ProcessorCount { get; set; }
 
-        public int Phase1MaxProcessorCount { get; } = 5;
+        public int Phase1MaxCount { get; set; }
     }
 }

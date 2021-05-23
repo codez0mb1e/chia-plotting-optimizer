@@ -49,7 +49,7 @@ namespace PlottingOptimizer.Core
 
             newPhase1Count = (int)Math.Floor((decimal)(availableProcessorCount/ _computeResources.Phase1ProcessorCount));
 
-            return newPhase1Count < _computeResources.Phase1MaxProcessorCount ? newPhase1Count : _computeResources.Phase1MaxProcessorCount;
+            return newPhase1Count < _computeResources.Phase1MaxCount ? newPhase1Count : _computeResources.Phase1MaxCount;
         }
 
 
