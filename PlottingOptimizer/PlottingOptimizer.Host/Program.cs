@@ -21,7 +21,7 @@ namespace PlottingOptimizer
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.dev.json").Build();
+                .AddJsonFile("appsettings.u1804.json").Build();
 
             IConfigurationSection section = config.GetSection(nameof(PlottingSettings));
             return section.Get<PlottingSettings>();
