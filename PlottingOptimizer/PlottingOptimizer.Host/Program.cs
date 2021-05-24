@@ -50,7 +50,7 @@ namespace PlottingOptimizer
                 int optimalProcessToStart = optimizerStrategy.CalculatePhases1OptimalCount(phasesStats);
 
                 for (int i = 0; i < optimalProcessToStart; i++)
-                    _ = Task.Run(async () => await RunPlottingScriptAsync(disks: GetDisks(), cancellationToken));
+                    Task.Run(async () => await RunPlottingScriptAsync(disks: GetDisks(), cancellationToken)).Wait();
 
 
                 await Task.Delay(Config.PullingPeriod, cancellationToken);
@@ -121,7 +121,9 @@ namespace PlottingOptimizer
 
                 ps.AddScript(script);
 
-                await ps.InvokeAsync().ConfigureAwait(false);
+                var r = await ps.InvokeAsync().ConfigureAwait(false);
+                foreach (PSObject o in r.ReadAll())
+                    Console.WriteLine(o);
 
                 Console.WriteLine($"{currentTime:G} > End plotting");
             }
