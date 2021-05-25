@@ -8,9 +8,6 @@
   [string]$chiaVersion
 )
 
-Set-Alias -Name chia -Value $ENV:LOCALAPPDATA\chia-blockchain\app-$chiaVersion\resources\app.asar.unpacked\daemon\chia.exe
-Write-Host "Chia version:" (chia version)
-
 
 function Get-PlotterLogPath { 
   $date = Get-date -format yyyy-MM-ddThh-mm-ss
@@ -20,9 +17,13 @@ function Get-PlotterLogPath {
   $path
 }
 
+
+Set-Alias -Name chia -Value $ENV:LOCALAPPDATA\chia-blockchain\app-$chiaVersion\resources\app.asar.unpacked\daemon\chia.exe
+Write-Host "Chia version:" (chia version)
+
 $logPath = Get-PlotterLogPath
 
 New-Item -Path $logPath -ItemType "file" -Value "Starting phase 1/1"
-Start-Sleep -Seconds 60
+Start-Sleep -Seconds 65
 
 Write-Host "Completed."

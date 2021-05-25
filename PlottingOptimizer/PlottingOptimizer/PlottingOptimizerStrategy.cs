@@ -31,7 +31,7 @@ namespace PlottingOptimizer.Core
 
             var phasesStats = GetPhaseNumberToCurrentRunningProcessCount(currentPhases).ToImmutableList();
             foreach (var s in phasesStats)
-                Console.WriteLine($"Phase #{s.PhaseNumber}: {s.ProcessesCount} active processes.");
+                Console.WriteLine($"Phase #{s.PhaseNumber}: {s.ProcessesCount} active processes."); // TODO: replace to logger
 
 
             int phase1Count = phasesStats

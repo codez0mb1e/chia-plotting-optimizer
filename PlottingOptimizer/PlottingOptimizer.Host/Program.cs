@@ -13,7 +13,7 @@ using PlottingOptimizer.Core.Configurations;
 using static PlottingOptimizer.RandomNumberGenerator;
 
 
-namespace PlottingOptimizer
+namespace PlottingOptimizer.Host
 {
     class Program
     {
@@ -21,7 +21,7 @@ namespace PlottingOptimizer
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.u1804.json").Build();
+                .AddJsonFile("appsettings.dev.json").Build();
 
             IConfigurationSection section = config.GetSection(nameof(PlottingSettings));
             return section.Get<PlottingSettings>();
@@ -41,18 +41,26 @@ namespace PlottingOptimizer
 
             while (!cancellationToken.IsCancellationRequested)
             {
+                //
                 IEnumerable<FileInfo> files = di.GetFiles("*.log");
 
                 IDictionary<string, int> phasesStats = files
                     .Where(f => f.LastWriteTimeUtc > DateTime.UtcNow.Subtract(TimeSpan.FromDays(5)))
-                    .Select(f => new { f.Name, Count = GetPhasesNumberAsync(f.FullName, cancellationToken).Result }).ToDictionary(s => s.Name, s => s.Count);
+                    .Select(f => new { f.Name, Count = GetPhasesNumberAsync(f.FullName, cancellationToken).Result })
+                    .ToDictionary(s => s.Name, s => s.Count);
 
-                int optimalProcessToStart = optimizerStrategy.CalculatePhases1OptimalCount(phasesStats);
+                //
+                IEnumerable<Task> tasks = Enumerable
+                    .Range(0, optimizerStrategy.CalculatePhases1OptimalCount(phasesStats))
+                    .Select(i => RunPlottingScriptAsync(disks: GetDisks(), cancellationToken));
 
-                for (int i = 0; i < optimalProcessToStart; i++)
-                    Task.Run(async () => await RunPlottingScriptAsync(disks: GetDisks(), cancellationToken)).Wait();
+                Task.WhenAll(tasks);
 
+                //await Task
+                //    .WhenAll(tasks)
+                //    .ConfigureAwait(false);
 
+                //
                 await Task.Delay(Config.PullingPeriod, cancellationToken);
             }
         }
@@ -73,6 +81,7 @@ namespace PlottingOptimizer
             if (filePath == null) throw new ArgumentNullException(nameof(filePath));
 
             const string phaseLabelPattern = @"(Starting phase \d{1}\/\d{1})|(Renamed final file from)";
+            const RegexOptions regexOptions = RegexOptions.Multiline | RegexOptions.IgnoreCase;
 
             for (int i = 0; i < Config.PlottingLogReadingAttemptsN; ++i) 
                 try
@@ -82,9 +91,7 @@ namespace PlottingOptimizer
                     
                     string content = await reader.ReadToEndAsync().ConfigureAwait(false);
 
-                    MatchCollection matches = Regex.Matches(content, phaseLabelPattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
-
-                    return matches.Count;
+                    return Regex.Matches(content, phaseLabelPattern, regexOptions).Count;
                 }
                 catch (IOException)
                 {
