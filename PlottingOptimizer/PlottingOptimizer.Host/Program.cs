@@ -17,11 +17,19 @@ namespace PlottingOptimizer.Host
 {
     class Program
     {
+        private const string Environment =
+#if DEBUG
+                "dev"
+#else
+                "u1804"
+#endif
+            ;
+
         private static readonly Lazy<PlottingSettings> PlottingSettings = new(() =>
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.dev.json").Build();
+                .AddJsonFile($"appsettings.{Environment}.json").Build();
 
             IConfigurationSection section = config.GetSection(nameof(PlottingSettings));
             return section.Get<PlottingSettings>();
@@ -60,7 +68,6 @@ namespace PlottingOptimizer.Host
                 //    .WhenAll(tasks)
                 //    .ConfigureAwait(false);
 
-                //
                 await Task.Delay(Config.PullingPeriod, cancellationToken);
             }
         }
