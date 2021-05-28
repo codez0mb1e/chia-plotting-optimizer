@@ -24,6 +24,6 @@ Write-Host "Chia version:" (chia version)
 $logPath = Get-PlotterLogPath
 
 New-Item -Path $logPath -ItemType "file" -Value "Starting phase 1/1"
-Start-Sleep -Seconds 65
+Start-Sleep -Seconds 60
 
 Write-Host "Completed."
