@@ -156,6 +156,35 @@ git clone git@github.com:codez0mb1e/chia-farmer.git
 ```
 
 
+### After reboot
+
+```bash
+## Get updates
+sudo apt update && sudo  apt upgrade -y
+
+
+## Mount disks
+sudo mount /dev/sdc1 /harvestdrive1
+
+sudo parted /dev/nvme0n1 --script mklabel gpt mkpart xfspart xfs 0% 100%
+sudo mkfs.xfs /dev/nvme0n1p1
+sudo partprobe /dev/nvme0n1p1
+sudo mount /dev/nvme0n1p1 /plotdrive1
+sudo chmod -R 777 /plotdrive1
+lsblk
+
+
+## Start Chia farmer daemons
+cd chia-blockchain
+. ./activate
+cd ~
+
+chia version
+chia start farmer-only
+
+```
+
+
 ### Chia GUI (obsolete)
 
 The GUI requires you have Ubuntu Desktop or a similar windowing system installed.
