@@ -117,7 +117,7 @@ namespace PlottingOptimizer.Host
             if (disks.FinalPath == null) throw new ArgumentException(nameof(disks));
             if (disks.TempPath == disks.FinalPath) throw new ArgumentException();
 
-            await Task.Delay(TimeSpan.FromSeconds(RandomNumber(0, 10)), cancellationToken); // avoid throttling
+            await Task.Delay(TimeSpan.FromSeconds(RandomNumber(1, 10)), cancellationToken); // avoid throttling
 
             DateTime currentTime = DateTime.UtcNow;
             Console.WriteLine($"{currentTime:G} > Starting plotting for {disks.TempPath} to {disks.FinalPath}...");
@@ -131,11 +131,13 @@ namespace PlottingOptimizer.Host
                     .Replace("[string]$finalDir", $"[string]$finalDir = '{disks.FinalPath}'")
                     .Replace("[string]$logDir", $"[string]$logDir = '{Config.PlottingDirectories.LogDir}'")
                     .Replace("[string]$chiaVersion", $"[string]$chiaVersion = '{Config.ChiaGuiVersion}'")
-                    .Replace("[int]$threads", $"[int]$threads = {Config.ComputeResources.Phase1ProcessorCount}");
+                    .Replace("[int]$threads", $"[int]$threads = {Config.ComputeResources.Phase1ProcessorCount}")
+                    .Replace("[string]$farmerKey", "[string]$farmerKey = <farmer_key>");
 
                 ps.AddScript(script);
 
                 var r = await ps.InvokeAsync().ConfigureAwait(false);
+
                 foreach (PSObject o in r.ReadAll())
                     Console.WriteLine(o);
 
