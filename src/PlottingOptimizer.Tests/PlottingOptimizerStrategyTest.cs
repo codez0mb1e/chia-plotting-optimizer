@@ -15,7 +15,7 @@ namespace PlottingOptimizer.Tests
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile($"appsettings.tests.json").Build();
+                .AddJsonFile("appsettings.tests.json").Build();
 
             IConfigurationSection section = config.GetSection(nameof(PlottingSettings));
             return section.Get<PlottingSettings>();
