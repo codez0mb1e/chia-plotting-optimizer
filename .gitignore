@@ -31,3 +31,4 @@ project.lock.json
 global.json
 launchSettings.json
 .vs/
+out/
