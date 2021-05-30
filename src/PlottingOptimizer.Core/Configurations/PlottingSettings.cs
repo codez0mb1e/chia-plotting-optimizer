@@ -8,6 +8,8 @@ namespace PlottingOptimizer.Core.Configurations
 
         public PlottingComputeResources ComputeResources { get; set; }
 
+        public string FarmerKey { get; set; }
+
 
         public string ChiaGuiVersion { get; set; }
 

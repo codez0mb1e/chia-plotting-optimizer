@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PlottingOptimizer\PlottingOptimizer.Core.csproj" />
+    <ProjectReference Include="..\PlottingOptimizer.Core\PlottingOptimizer.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
