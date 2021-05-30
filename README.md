@@ -1,220 +1,102 @@
+# Chia Plotting Optimizer
 
-# Chia Network Farmer
+___The optimizer of the Plotting process in the Chia Network Blockchain.___
 
-In this repository collected the most useful script and libraries that help to optimize farming process of Chia plots.
+## Motivation
 
-## Deployment of Chia Mining cluster
+Chia plotting process has the 4 stages. The first stage is actively used by the CPU and multi-threading (_CPU bound_), and the rest are more related to working on the hard disk workloads (_IO bound_).
 
-### Set up VM
+An imbalance towards either CPU-bound loads or the other IO-bound loads leads to an inefficient Plotting process, or even throttling CPU- or IO-subsystems.
 
-Use _Storage optimized_ VM instances in Microsoft Azure. For this type of VM instances is available _NVMe SSD(s)_ on demand.
+The `Chia Plotting Optimizer` project try to avoid imbalance between CPU-bound and IO-bound and in the same time maximize number of parallel plotting processes.
 
-Create [Lsv2-series VM](https://docs.microsoft.com/en-us/azure/virtual-machines/lsv2-series) using [Azure Portal](https://portal.azure.com/#create/Canonical.UbuntuServer1804LTS-ARM) or Azure CLI.
+## Features
 
-Connect with VM and update: `sudo apt update && sudo apt upgrade -y`
+- Multi-platform: Ubuntu Server 18+ and Windows Server 2019, at least,
+- Flexible [configuration](#Configuration),
+- Ability to work in farmer-only mode,
+- Support multiple directories for temporary files and for ready plots,
+- Light-weight and fast C# library.
 
-Add non-root user (optional):
+## Installation
 
-```bash
-sudo adduser $user_name
-sudo usermod -aG sudo $user_name
-```
-
-### Mount NVMe volume ([instruction](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/attach-disk-portal))
-
-```bash
-# view available disks
-lsblk
-
-# for each NVMe drive
-sudo parted /dev/nvme0n1 --script mklabel gpt mkpart xfspart xfs 0% 100%
-sudo mkfs.xfs /dev/nvme0n1p1
-sudo partprobe /dev/nvme0n1p1
-
-sudo mkdir /plotdrive1
-sudo mount /dev/nvme0n1p1 /plotdrive1
-sudo chmod -R 777 /plotdrive1
-
-
-# for each HDD drive
-sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
-sudo mkfs.xfs /dev/sdc1
-sudo partprobe /dev/sdc1
-
-sudo mkdir /harvestdrive1
-sudo mount /dev/sdc1 /harvestdrive1
-sudo chmod -R 777 /harvestdrive1
-
-# (optional) Set auto mount after reboot
-df -h
-```
-
-### Chia Software
-
-Install Chia Software and activate it ([instruction](https://github.com/Chia-Network/chia-blockchain/wiki/INSTALL#ubuntudebian)):
+Clone from GitHub
 
 ```bash
-# install python 3.7 (if necessary)
-
-sudo apt -y install python3.7
-sudo apt install python3.7-venv python3.7-distutils python3.7-dev git lsb-release -y
-
-
-# Checkout the source and install
-git clone https://github.com/Chia-Network/chia-blockchain.git -b latest --recurse-submodules
-cd chia-blockchain
-
-sh install.sh
-
-. ./activate
+git clone git@github.com:codez0mb1e/chia-plotting-optimizer.git
 ```
 
-### Run Chia
-
-Init Chia using [CLI](https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference):
+Check that you have installed .NET 5 (if you haven't then it's [easy to install](https://github.com/codez0mb1e/cloud-rstudio-server/blob/master/scripts/install_dotnet_tools.sh)).
 
 ```bash
-chia version
-
-chia keys add
-chia keys show
-
-chia init
-
-chia start farmer
+dotnet --version
 ```
 
-[Start plotting](https://github.com/Chia-Network/chia-blockchain/wiki/CLI-Commands-Reference#create):
+[How to deploy Chia Farm from Zero?](deploy.md)
+
+## Running
+
+Update configuration (see [Configuration section](#Configuration) below), and run `run.ps` via:
+
+a. Bash:
 
 ```bash
-chia keys show # see your farmer key
-
-chia plots create -k 32 -n 1 -b 5000 -r 2 -t /plotdrive1 -d /harvestdrive1 -f $farmer_key 2>&1 | tee ~/chia-blockchain/logs/$log_name.log
+cd chia-plotting-optimizer/src
+./run.ps
 ```
 
-### Tools
-
-Install Powershell ([instruction](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1)):
-
-```bash
-sudo apt install -y wget apt-transport-https software-properties-common
-# Download and register  the Microsoft repository GPG keys
-wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-
-sudo apt update
-sudo add-apt-repository universe
-
-sudo apt install -y powershell
-
-pwsh # Start PowerShell
-```
-
-Install .NET Core: [steps](/codez0mb1e/cloud-rstudio-server/blob/master/scripts/install_dotnet_tools.sh).
-
-
-### Monitoring
-
-[Monitoring NVMe](https://github.com/linux-nvme/nvme-cli):
-
-```bash
-sudo apt -y install nvme-cli
-sudo nvme list
-
-sudo nvme smart-log /dev/nvme0n1 | grep percentage_used
-```
-
-Monitoring plotting vai [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter) (WARN: only for Windows):
+b. or Powershell:
 
 ```powershell
-Install-Module -Repository PSGallery -Name PSChiaPlotter
-Get-ChiaPlottingStatistic | sort Time_started -Descending | select -first 20
+Set-Location chia-plotting-optimizer/src
+./run.ps
 ```
 
-### Plotting Optimizer
+## Configuration
 
-```bash
-# 1.
-# view ssh-key 
-cat ~/.ssh/id_rsa.pub
-# or create if it isn't exisit
-cd ~/.ssh && ssh-keygen
+- `ChiaGuiVersion`: installed Chia Software version
+- `farmerKey`: you farmer public key for farm-only mode
+- `computeResources` section:
+  - `totalProcessorCount`: total number of CPUs
+  - `OsDemandProcessorCount`: number of CPU threads allocated for OS
+  - `ChiaDemandProcessorCount`: number of CPU threads allocated for non-plotting Chia processes
+  - `phase1ProcessorCount`: number of CPU threads allocated for CPU-bound (phase 1) phases of   plotting
+  - `phase1MaxCount`: maximum number of CPU threads allocated for all CPU-bound phases.
+- `plottingDirectories` section:
+  - `logDir`: plotting log directory
+  - `tempPathList`: list of directories for temporary files
+  - `finalPathList`: list of directories for ready plots.
 
-# 2. Register SSH keys in github
-cat id_rsa.pub
-# and register to https://github.com/settings/keys
+Example of configuration for Ubuntu Server ([source](/src/PlottingOptimizer.Host/appsettings.u1804.json)):
 
-# 3.
-git config --global user.name codez0mb1e
-git config --global user.email $user_email
-```
+```json
+{
+  "plottingSettings": {
+    "ChiaGuiVersion": "1.1.6",
 
+    "plottingDirectories": {
+      "logDir": "/home/<usr_name>/chia-blockchain/logs",
+      "tempPathList": [ "/plotdrive1", "/plotdrive2", "/plotdrive3" ],
+      "finalPathList": [ "/harvestdrive1", "/harvestdrive2", "/harvestdrive3" ]
+    },
 
-```bash
-cd ~
-git clone git@github.com:codez0mb1e/chia-farmer.git
-```
+    "computeResources": {
+      "totalProcessorCount": 16,
+      "OsDemandProcessorCount": 1,
+      "ChiaDemandProcessorCount": 0,
+      "phase1ProcessorCount": 2,
+      "phase1MaxCount": 6
+    },
 
-
-### After reboot
-
-```bash
-## Get updates
-sudo apt update && sudo  apt upgrade -y
-
-
-## Mount disks
-sudo mount /dev/sdc1 /harvestdrive1
-
-sudo parted /dev/nvme0n1 --script mklabel gpt mkpart xfspart xfs 0% 100%
-sudo mkfs.xfs /dev/nvme0n1p1
-sudo partprobe /dev/nvme0n1p1
-sudo mount /dev/nvme0n1p1 /plotdrive1
-sudo chmod -R 777 /plotdrive1
-lsblk
-
-
-## Start Chia farmer daemons
-cd chia-blockchain
-. ./activate
-cd ~
-
-chia version
-chia start farmer-only
-
-```
-
-
-### Chia GUI (obsolete)
-
-The GUI requires you have Ubuntu Desktop or a similar windowing system installed.
-WARN: _You can not install and run the GUI as root._
-
-```bash
-# Install GUI ---- 
-sudo apt -y install xfce4 # or ubuntu-desktop
-sudo reboot
-
-# Remote access [2] ----
-
-sudo apt-get -y install xrdp
-sudo systemctl enable xrdp
-
-echo xfce4-session >~/.xsession
-
-sudo service xrdp restart
-
-az vm open-port --resource-group $resource_group_name --name $vm_name --port 3389
-
-# Install Chia GUI
-chmod +x ./install-gui.sh
-./install-gui.sh
-
-cd chia-blockchain-gui
-npm run electron &
+    "plottingScriptPath": "scripts/run_plotting.u1804.ps1",
+    "farmerKey": "<your_farmer_key>"
+  } 
+}
 ```
 
 ## References
 
-1. https://www.chia.net/
-1. https://github.com/Chia-Network/chia-blockchain/
+1. [Official Chia Network](https://www.chia.net/).
+1. [Chia Network GitHub](https://github.com/Chia-Network/chia-blockchain/).
+1. [Chia Green Paper](https://www.chia.net/assets/ChiaGreenPaper.pdf).
+1. [Deployment Chia Farm from Zero](deploy.md).
