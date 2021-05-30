@@ -63,7 +63,7 @@ namespace PlottingOptimizer.Host
                     .Range(0, optimizer.CalculatePhases1OptimalCount(phasesStats))
                     .Select(i => RunPlottingScriptAsync(disks: GetDisks(plotSettings), plotSettings, cancellationToken));
 
-                await Task.WhenAll(tasks);
+                Task.WhenAll(tasks);
 
 
                 // wait next pulling
