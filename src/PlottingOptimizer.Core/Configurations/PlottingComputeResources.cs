@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PlottingOptimizer.Core.Configurations
+﻿namespace PlottingOptimizer.Core.Configurations
 {
     public class PlottingComputeResources
     {

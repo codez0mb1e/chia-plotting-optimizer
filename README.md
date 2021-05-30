@@ -110,7 +110,7 @@ sudo apt install -y powershell
 pwsh # Start PowerShell
 ```
 
-Install .NET Core: [steps](https://github.com/codez0mb1e/cloud-rstudio-server/blob/master/scripts/install_core.sh).
+Install .NET Core: [steps](/codez0mb1e/cloud-rstudio-server/blob/master/scripts/install_dotnet_tools.sh).
 
 
 ### Monitoring
@@ -130,6 +130,60 @@ Monitoring plotting vai [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter
 Install-Module -Repository PSGallery -Name PSChiaPlotter
 Get-ChiaPlottingStatistic | sort Time_started -Descending | select -first 20
 ```
+
+### Plotting Optimizer
+
+```bash
+# 1.
+# view ssh-key 
+cat ~/.ssh/id_rsa.pub
+# or create if it isn't exisit
+cd ~/.ssh && ssh-keygen
+
+# 2. Register SSH keys in github
+cat id_rsa.pub
+# and register to https://github.com/settings/keys
+
+# 3.
+git config --global user.name codez0mb1e
+git config --global user.email $user_email
+```
+
+
+```bash
+cd ~
+git clone git@github.com:codez0mb1e/chia-farmer.git
+```
+
+
+### After reboot
+
+```bash
+## Get updates
+sudo apt update && sudo  apt upgrade -y
+
+
+## Mount disks
+sudo mount /dev/sdc1 /harvestdrive1
+
+sudo parted /dev/nvme0n1 --script mklabel gpt mkpart xfspart xfs 0% 100%
+sudo mkfs.xfs /dev/nvme0n1p1
+sudo partprobe /dev/nvme0n1p1
+sudo mount /dev/nvme0n1p1 /plotdrive1
+sudo chmod -R 777 /plotdrive1
+lsblk
+
+
+## Start Chia farmer daemons
+cd chia-blockchain
+. ./activate
+cd ~
+
+chia version
+chia start farmer-only
+
+```
+
 
 ### Chia GUI (obsolete)
 

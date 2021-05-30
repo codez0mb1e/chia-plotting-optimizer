@@ -12,6 +12,9 @@ namespace PlottingOptimizer.Core
     }
 
 
+    /// <summary>
+    /// Plotting Optimizer Strategy
+    /// </summary>
     public class PlottingOptimizerStrategy : IPlottingOptimizerStrategy
     {
         private readonly PlottingComputeResources _computeResources;
@@ -30,8 +33,8 @@ namespace PlottingOptimizer.Core
             int newPhase1Count = 0;
 
             var phasesStats = GetPhaseNumberToCurrentRunningProcessCount(currentPhases).ToImmutableList();
-            foreach (var s in phasesStats)
-                Console.WriteLine($"Phase #{s.PhaseNumber}: {s.ProcessesCount} active processes.");
+            foreach (var ps in phasesStats.Where(p => p.PhaseNumber < 5))
+                Console.WriteLine($"Phase #{ps.PhaseNumber}: {ps.ProcessesCount} active processes."); // TODO: replace to logger
 
 
             int phase1Count = phasesStats
@@ -49,7 +52,14 @@ namespace PlottingOptimizer.Core
 
             newPhase1Count = (int)Math.Floor((decimal)(availableProcessorCount/ _computeResources.Phase1ProcessorCount));
 
-            return newPhase1Count < _computeResources.Phase1MaxCount ? newPhase1Count : _computeResources.Phase1MaxCount;
+            newPhase1Count = Math.Max(0, newPhase1Count);
+            newPhase1Count = Math.Min(_computeResources.Phase1MaxCount, newPhase1Count);
+
+            if (newPhase1Count > 0)
+                Console.WriteLine($"{newPhase1Count} plots are available to start.");
+
+
+            return newPhase1Count;
         }
 
 
