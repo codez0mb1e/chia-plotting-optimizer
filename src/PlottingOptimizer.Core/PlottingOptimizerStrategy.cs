@@ -54,8 +54,7 @@ namespace PlottingOptimizer.Core
 
 
             // check min-max restrictions
-            newPhase1Count = phase1Count > _computeResources.Phase1MaxCount ? 0 : newPhase1Count;
-            newPhase1Count = Math.Min(_computeResources.Phase1MaxCount, newPhase1Count);
+            newPhase1Count = Math.Min(_computeResources.Phase1MaxCount - phase1Count, newPhase1Count);
             newPhase1Count = Math.Max(0, newPhase1Count);
             
 
