@@ -126,12 +126,34 @@ sudo nvme list
 sudo nvme smart-log /dev/nvme0n1 | grep percentage_used
 ```
 
-Monitoring plotting vai [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter) (WARN: only for Windows):
+Monitoring plotting via [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter) (WARN: only for Windows):
 
 ```powershell
 Install-Module -Repository PSGallery -Name PSChiaPlotter
 Get-ChiaPlottingStatistic | sort Time_started -Descending | select -first 20
 ```
+
+Monitoring plotting via [Chia Plot Graph](https://github.com/stolk/chiaplotgraph):
+
+```bash
+sudo apt install -y  build-essential
+
+# clone and build tool
+mkdir tools; cd tools
+git clone https://github.com/stolk/chiaplotgraph.git
+cd chiaplotgraph
+make 
+```
+
+```powershell
+# analyze logs
+$top_n = 20
+Set-Location ./tools/chiaplotgraph/
+
+$logFiles = Get-ChildItem -Path ~/chia-blockchain/logs/ | Sort-Object -Property LastWriteTime -Descending | Select -expa FullName -first $top_n  
+./chiaplotgraph $logFiles  
+```
+
 
 ## After VMs Reboot...
 

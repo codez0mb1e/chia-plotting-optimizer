@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{01983322-C754-4CC3-B732-906009BEC254}"
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
+		..\deploy.md = ..\deploy.md
 		..\README.md = ..\README.md
 		run.ps1 = run.ps1
 	EndProjectSection
