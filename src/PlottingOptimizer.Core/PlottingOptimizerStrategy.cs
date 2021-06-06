@@ -52,9 +52,13 @@ namespace PlottingOptimizer.Core
 
             newPhase1Count = (int)Math.Floor((decimal)(availableProcessorCount/ _computeResources.Phase1ProcessorCount));
 
-            newPhase1Count = Math.Max(0, newPhase1Count);
-            newPhase1Count = Math.Min(_computeResources.Phase1MaxCount, newPhase1Count);
 
+            // check min-max restrictions
+            newPhase1Count = Math.Min(_computeResources.Phase1MaxCount - phase1Count, newPhase1Count);
+            newPhase1Count = Math.Max(0, newPhase1Count);
+            
+
+            // log strategy result
             if (newPhase1Count > 0)
                 Console.WriteLine($"{newPhase1Count} plots are available to start.");
 
