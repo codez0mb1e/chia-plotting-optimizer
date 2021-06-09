@@ -133,7 +133,7 @@ Install-Module -Repository PSGallery -Name PSChiaPlotter
 Get-ChiaPlottingStatistic | sort Time_started -Descending | select -first 20
 ```
 
-Monitoring plotting via [Chia Plot Graph](https://github.com/stolk/chiaplotgraph):
+Plotting monitoring via [Chia Plot Graph](https://github.com/stolk/chiaplotgraph):
 
 ```bash
 sudo apt install -y  build-essential
@@ -152,6 +152,18 @@ Set-Location ./tools/chiaplotgraph/
 
 $logFiles = Get-ChildItem -Path ~/chia-blockchain/logs/ | Sort-Object -Property LastWriteTime -Descending | Select -expa FullName -first $top_n  
 ./chiaplotgraph $logFiles  
+```
+
+Harvesting monitoring via [Chia Harvest Graph](https://github.com/stolk/chiaharvestgraph):
+
+```bash
+# install
+git clone https://github.com/stolk/chiaharvestgraph.git
+cd chiaplotgraph
+make 
+
+# run
+./chiaharvestgraph ~/chia-blockchain/farmer-logs
 ```
 
 
