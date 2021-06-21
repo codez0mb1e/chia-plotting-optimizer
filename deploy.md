@@ -126,16 +126,50 @@ sudo nvme list
 sudo nvme smart-log /dev/nvme0n1 | grep percentage_used
 ```
 
-Monitoring plotting via [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter) (WARN: only for Windows):
+Monitoring of Plotting via [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter) (WARN: only for Windows):
 
 ```powershell
 Install-Module -Repository PSGallery -Name PSChiaPlotter
 Get-ChiaPlottingStatistic | sort Time_started -Descending | select -first 20
 ```
 
-## Attempts to Boost 
+Monitoring of Plotting via [Chia Plot Graph](https://github.com/stolk/chiaplotgraph):
+
+```bash
+sudo apt install -y  build-essential
+
+# clone and build tool
+mkdir tools; cd tools
+git clone https://github.com/stolk/chiaplotgraph.git
+cd chiaplotgraph
+make 
+```
+
+```powershell
+# analyze logs
+$top_n = 20
+Set-Location ./tools/chiaplotgraph/
+
+$logFiles = Get-ChildItem -Path ~/chia-blockchain/logs/ | Sort-Object -Property LastWriteTime -Descending | Select -expa FullName -first $top_n  
+./chiaplotgraph $logFiles  
+```
+
+Monitoring of Harvesting via [Chia Harvest Graph](https://github.com/stolk/chiaharvestgraph):
+
+```bash
+# install
+git clone https://github.com/stolk/chiaharvestgraph.git
+cd chiaplotgraph
+make 
+
+# run
+./chiaharvestgraph ~/chia-blockchain/farmer-logs
+```
+
+## Attempts to Boost (beta)
 
 New [multi-thread Chia Plotter](https://github.com/madMAx43v3r/chia-plotter) (WARN: under active development).
+
 
 ## After VMs Reboot...
 
