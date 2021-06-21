@@ -115,7 +115,7 @@ git config --global user.name $user_name # @codez0mb1e
 git config --global user.email $user_email
 ```
 
-# Monitoring
+## Monitoring
 
 [Monitoring NVMe](https://github.com/linux-nvme/nvme-cli):
 
@@ -126,12 +126,16 @@ sudo nvme list
 sudo nvme smart-log /dev/nvme0n1 | grep percentage_used
 ```
 
-Monitoring plotting vai [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter) (WARN: only for Windows):
+Monitoring plotting via [PSChiaPlotter](https://github.com/MrPig91/PSChiaPlotter) (WARN: only for Windows):
 
 ```powershell
 Install-Module -Repository PSGallery -Name PSChiaPlotter
 Get-ChiaPlottingStatistic | sort Time_started -Descending | select -first 20
 ```
+
+## Attempts to Boost 
+
+New [multi-thread Chia Plotter](https://github.com/madMAx43v3r/chia-plotter) (WARN: under active development).
 
 ## After VMs Reboot...
 
