@@ -85,6 +85,7 @@ namespace PlottingOptimizer.Tests
             Assert.AreEqual(_settings.Phase1MaxCount, actual);
         }
 
+
         [TestMethod]
         public void Test5()
         {

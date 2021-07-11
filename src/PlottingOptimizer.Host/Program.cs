@@ -17,6 +17,7 @@ namespace PlottingOptimizer.Host
 {
     class Program
     {
+        // Set Environment: Development (dev, Windows 10) or Production (u1804, Ubuntu Server 18.04)
         private const string Environment =
         #if DEBUG
             "dev"
@@ -113,7 +114,7 @@ namespace PlottingOptimizer.Host
         #endregion
 
 
-        #region Plotting script
+        #region Plotting script running
 
         private static (string TempPath, string FinalPath) GetDisks(PlottingSettings settings)
         {
