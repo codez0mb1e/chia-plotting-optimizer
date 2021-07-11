@@ -196,31 +196,10 @@ chia version
 chia start farmer-only
 ```
 
-### Chia GUI (obsolete)
+### Chia Pooling
 
-The GUI requires you have Ubuntu Desktop or a similar windowing system installed.
-WARN: _You can not install and run the GUI as root._
+Useful links:
 
-```bash
-# Install GUI ---- 
-sudo apt -y install xfce4 # or ubuntu-desktop
-sudo reboot
-
-# Remote access [2] ----
-
-sudo apt-get -y install xrdp
-sudo systemctl enable xrdp
-
-echo xfce4-session >~/.xsession
-
-sudo service xrdp restart
-
-az vm open-port --resource-group $resource_group_name --name $vm_name --port 3389
-
-# Install Chia GUI
-chmod +x ./install-gui.sh
-./install-gui.sh
-
-cd chia-blockchain-gui
-npm run electron &
-```
+1. [How to pick a Cchia pool](https://www.chia.net/2021/07/09/how-to-pick-a-chia-pool.en.html)
+1. [Pooling User Guide](https://github.com/Chia-Network/chia-blockchain/wiki/Pooling-User-Guide)
+1. [Pooling FAQ](https://github.com/Chia-Network/chia-blockchain/wiki/Pooling-FAQ)
